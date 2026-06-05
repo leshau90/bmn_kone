@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panduan — BMN KPU</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    [x-cloak] { display: none !important; }
+    .ring-indigo { box-shadow: 0 0 0 2px #818cf8; }
+    img.broken-hide { display: none; }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen pb-24">
+
+<!-- Header -->
+<div class="bg-indigo-600 px-4 pt-10 pb-8 text-white">
+  <div class="mx-auto max-w-5xl">
+    <p class="text-xs font-medium uppercase tracking-widest text-indigo-200 mb-1">BMN KPU</p>
+    <h1 class="text-2xl font-bold">Panduan Penggunaan</h1>
+    <p class="mt-1 text-sm text-indigo-200">Prosedur Pencatatan Barang Milik Negara</p>
+  </div>
+</div>
+
+<div class="mx-auto max-w-5xl px-4 lg:flex lg:gap-8 lg:items-start" id="main-layout">
+
+  <!-- Sidebar -->
+  <aside id="sop-nav" class="hidden lg:block w-60 shrink-0 mt-6">
+    <div class="sticky top-6 rounded-xl bg-white border border-gray-200 shadow-sm overflow-hidden">
+      <div class="bg-indigo-600 px-4 py-3">
+        <p class="text-[10px] font-bold uppercase tracking-widest text-indigo-200">Daftar SOP</p>
+        <p class="text-xs text-indigo-100 mt-0.5">10 Prosedur Sistem BMN</p>
+      </div>
+      <nav class="p-2 space-y-0.5" id="sop-nav-list"></nav>
+      <div class="border-t border-gray-100 px-3 py-2.5 space-y-1">
+        <p class="text-[9px] uppercase tracking-wider text-gray-400 font-semibold mb-1">Keterangan</p>
+        <div class="flex items-center gap-1.5">
+          <span class="rounded px-1.5 py-0.5 text-[9px] font-semibold bg-blue-50 text-blue-600">Semua</span>
+          <span class="text-[10px] text-gray-500">Pegawai, Inv, BMN</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="rounded px-1.5 py-0.5 text-[9px] font-semibold bg-orange-50 text-orange-600">Inv · BMN</span>
+          <span class="text-[10px] text-gray-500">Tim Inventaris &amp; BMN</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="rounded px-1.5 py-0.5 text-[9px] font-semibold bg-purple-50 text-purple-600">BMN</span>
+          <span class="text-[10px] text-gray-500">Operator BMN saja</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <div class="flex-1 min-w-0">
+
+    <!-- Tab selector -->
+    <div class="sticky top-0 z-10 bg-gray-50 pt-4 pb-2">
+      <div class="flex rounded-xl border border-gray-200 bg-white p-1 shadow-sm" id="tab-bar"></div>
+      <div class="mt-2 flex items-center justify-center gap-3 text-xs text-gray-500" id="tab-meta-bar"></div>
+    </div>
+
+    <!-- Steps -->
+    <div class="mt-4 space-y-6" id="steps-container"></div>
+
+    <!-- Footer -->
+    <div class="mt-8 rounded-xl border border-gray-200 bg-white px-4 py-5 text-center space-y-1">
+      <p class="text-xs text-gray-400">Akses panduan ini kapan saja di</p>
+      <p class="font-mono text-sm font-semibold text-indigo-600">/guide</p>
+      <p class="text-xs text-gray-400 pt-1">atau scan QR code yang tertempel di papan informasi</p>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Data ────────────────────────────────────────────────────────────────────
+
+const ssKIR = [
+  { label: 'Buka halaman KIR atau scan QR lokasi ruangan', img: 'guide/ss-kir-kosong.png' },
+  { label: 'Daftar aset ruangan — tampilan List', img: 'guide/ss-kir-hasil.png' },
+  { label: 'Alihkan ke tampilan Grouped (kelompok per kode)', img: 'guide/ss-kir-grouped.png' },
+];
+
+const ssScanBarang = [
+  { label: 'Tap tombol Scan Barang di bagian atas halaman', img: 'guide/ss-scan-barang.png' },
+  { label: 'Detail aset langsung terbuka setelah scan', img: 'guide/ss-detail-aset.png' },
+];
+
+const stepsUmum = [
+  {
+    sop: 2,
+    title: 'Penelusuran dan Pengecekan Data Aset',
+    desc: 'Buka <strong>Daftar Aset</strong> dari halaman utama. Pilih field pencarian — keterangan, merk, ruangan, kode NUP — lalu ketik kata kunci dan tap <strong>Cari</strong>. Untuk angka (nomor, NUP, nilai, kondisi), tersedia filter min/maks. Ketuk baris untuk membuka halaman detail aset.',
+    tip: 'Tidak perlu login. Akses bebas untuk seluruh pegawai.',
+    waktu: '< 3 menit',
+    subSteps: [
+      { label: 'Buka halaman Daftar Aset', img: 'guide/ss-daftar-aset.png' },
+      { label: 'Ketik kata kunci dan tap Cari', img: 'guide/ss-daftar-aset-search.png' },
+      { label: 'Ketuk baris untuk melihat detail aset', img: 'guide/ss-detail-aset.png' },
+    ]
+  },
+  {
+    sop: 3,
+    title: 'Pengecekan Kartu Inventaris Ruangan (KIR)',
+    desc: 'Scan <strong>QR Code lokasi</strong> yang tertempel di pintu atau papan ruangan — sistem langsung membuka KIR berisi seluruh daftar aset di ruangan tersebut. Jika QR tidak tersedia, buka KIR dari tombol di Daftar Aset lalu ketik nama ruangan di kolom pencarian.',
+    tip: 'KIR tersedia dalam dua tampilan: <strong>List</strong> (urut NUP) dan <strong>Grouped</strong> (kelompok per kode barang). Ketuk baris untuk membuka detail aset.',
+    waktu: '< 5 menit',
+    subSteps: ssKIR,
+  },
+  {
+    sop: 4,
+    title: 'Penelusuran Aset per Item via Scan QR Code',
+    desc: 'Tap tombol <strong>Scan Barang</strong> yang tersedia di setiap halaman, izinkan akses kamera, lalu arahkan ke <strong>stiker QR Code</strong> pada fisik aset. Sistem otomatis membuka halaman detail aset tersebut.',
+    tip: 'Tombol Scan Barang selalu tersedia di bagian atas setiap halaman, termasuk saat sedang melihat daftar atau detail aset lain.',
+    waktu: '< 1 menit',
+    subSteps: ssScanBarang,
+  }
+];
+
+const stepsInvt = [
+  {
+    sop: 1,
+    title: 'Akses dan Login ke Sistem',
+    desc: 'Buka <strong>/login</strong> dan masukkan <em>nick</em> serta <em>password</em> yang diberikan oleh Operator BMN. Setelah login berhasil, tombol <strong>Edit</strong> akan muncul di seluruh halaman aset.',
+    tip: 'Sesi aktif selama 2 jam. Setelah habis, login ulang untuk kembali dapat mengedit.',
+    waktu: '< 2 menit',
+    subSteps: [
+      { label: 'Masukkan nick dan password', img: 'guide/ss-login.png' },
+      { label: 'Setelah login, kolom Edit tersedia di daftar aset', img: 'guide/ss-invt-daftar-aset.png' },
+    ]
+  },
+  {
+    sop: 2,
+    title: 'Penelusuran dan Pengecekan Data Aset',
+    desc: 'Setelah login, buka <strong>Daftar Aset</strong> — kolom <em>Edit</em> akan tampil di setiap baris. Cari aset menggunakan kata kunci (keterangan, merk, ruangan, kode NUP) atau filter angka. Ketuk baris untuk membuka detail.',
+    waktu: '< 3 menit',
+    subSteps: [
+      { label: 'Daftar aset dengan kolom Edit aktif', img: 'guide/ss-invt-daftar-aset.png' },
+      { label: 'Detail aset — tap tombol Edit untuk mulai mengedit', img: 'guide/ss-invt-detail-aset.png' },
+    ]
+  },
+  {
+    sop: 3,
+    title: 'Pengecekan Kartu Inventaris Ruangan (KIR)',
+    desc: 'Scan QR Code lokasi ruangan atau cari manual dari Daftar Aset. KIR menampilkan seluruh aset di ruangan beserta kondisi dan tahun perolehan. Tersedia tampilan <strong>List</strong> dan <strong>Grouped</strong>.',
+    waktu: '< 5 menit',
+    subSteps: ssKIR,
+  },
+  {
+    sop: 4,
+    title: 'Penelusuran Aset per Item via Scan QR Code',
+    desc: 'Tap <strong>Scan Barang</strong> di bagian atas halaman, arahkan kamera ke stiker QR Code pada fisik aset. Sistem membuka halaman detail aset — lanjutkan ke tombol <strong>Edit</strong> untuk mulai mengedit.',
+    waktu: '< 1 menit',
+    subSteps: ssScanBarang,
+  },
+  {
+    sop: 5,
+    title: 'Pencatatan Kondisi dan Catatan Aset',
+    desc: 'Buka halaman edit aset, ubah field <strong>Kondisi</strong> (Baik / Rusak Ringan / Rusak Berat) sesuai hasil pemeriksaan fisik. Tambahkan <strong>Catatan</strong> (maks. 100 karakter per entri) untuk merekam temuan. Tap <strong>Tinjau &amp; Simpan</strong> — konfirmasi perubahan lalu simpan.',
+    tip: 'Setiap perubahan dicatat otomatis dalam audit trail (append-only) beserta waktu dan nama pengguna.',
+    waktu: '< 10 menit',
+    subSteps: [
+      { label: 'Form edit — pilih Kondisi sesuai hasil pemeriksaan fisik', img: 'guide/ss-edit-invt.png' },
+      { label: 'Gulir ke bagian Catatan dan ketik temuan (maks. 100 karakter)', img: 'guide/ss-edit-invt-catatan.png' },
+      { label: 'Tap Tinjau & Simpan — konfirmasi sebelum data tersimpan', img: 'guide/ss-edit-invt-modal.png' },
+    ]
+  },
+  {
+    sop: 6,
+    title: 'Pemindahan / Pembaruan Lokasi Aset',
+    desc: 'Pada form edit, ubah field <strong>Ruangan Pengguna</strong> dengan memilih dari daftar ruangan yang sudah terdaftar di sistem. Simpan — riwayat pemindahan otomatis tercatat.',
+    tip: 'Ruangan hanya dapat dipilih dari daftar yang sudah ada. Jika ruangan tujuan belum terdaftar, hubungi Operator BMN.',
+    waktu: '< 5 menit',
+    subSteps: [
+      { label: 'Pilih Ruangan Pengguna dari daftar yang tersedia', img: 'guide/ss-edit-invt-ruangan.png' },
+    ]
+  },
+  {
+    sop: 7,
+    title: 'Penambahan Foto / Gambar Aset',
+    desc: 'Di halaman edit, gulir ke bagian <strong>Gambar</strong>. Tap <strong>+ Galeri</strong> untuk memilih foto dari penyimpanan perangkat, atau tap <strong>📷 Kamera</strong> untuk mengambil foto langsung. Foto disimpan otomatis dalam format WebP resolusi 720p.',
+    waktu: '< 5 menit',
+    subSteps: [
+      { label: 'Gulir ke bagian Gambar — tap + Galeri atau Kamera', img: 'guide/ss-edit-invt-gambar.png' },
+    ]
+  },
+  {
+    sop: 8,
+    title: 'Penambahan Surat / Dokumen Pendukung',
+    desc: 'Di halaman edit, gulir ke bagian <strong>Surat</strong>. Tap <strong>+ Upload Surat</strong> dan pilih file PDF dari perangkat. Dokumen tertaut pada data aset dan dapat diakses dari halaman detail.',
+    tip: 'Format file yang didukung: PDF. Pastikan nama file cukup deskriptif agar mudah diidentifikasi.',
+    waktu: '< 5 menit',
+    subSteps: [
+      { label: 'Gulir ke bagian Surat — tap + Upload Surat dan pilih PDF', img: 'guide/ss-edit-invt-surat.png' },
+    ]
+  }
+];
+
+const stepsOpBmn = [
+  ...stepsInvt.slice(0, 4),
+  {
+    sop: 5,
+    title: 'Pencatatan Kondisi dan Catatan Aset',
+    desc: 'Operator BMN memiliki akses edit yang sama dengan Tim Inventaris untuk kondisi dan catatan. Buka form edit, ubah <strong>Kondisi</strong> dan tambahkan <strong>Catatan</strong>, lalu konfirmasi dan simpan.',
+    tip: 'Setiap perubahan dicatat dalam audit trail secara append-only.',
+    waktu: '< 10 menit',
+    subSteps: [
+      { label: 'Form edit Operator BMN — ubah Kondisi aset', img: 'guide/ss-edit-opbmn.png' },
+      { label: 'Gulir ke bagian Catatan dan tambahkan temuan', img: 'guide/ss-edit-opbmn-catatan.png' },
+      { label: 'Konfirmasi perubahan sebelum disimpan', img: 'guide/ss-edit-opbmn-modal.png' },
+    ]
+  },
+  {
+    sop: 6,
+    title: 'Pemindahan / Pembaruan Lokasi Aset',
+    desc: 'Ubah field <strong>Ruangan Pengguna</strong> pada form edit. Operator BMN dapat mengetik nama ruangan baru secara bebas (tidak terbatas pada daftar yang ada) — ruangan baru otomatis tersedia untuk dipilih Tim Inventaris setelahnya.',
+    waktu: '< 5 menit',
+    subSteps: [
+      { label: 'Ruangan Pengguna — ketik bebas atau pilih dari daftar', img: 'guide/ss-edit-opbmn-ruangan.png' },
+    ]
+  },
+  {
+    sop: 7,
+    title: 'Penambahan Foto / Gambar Aset',
+    desc: 'Sama seperti Tim Inventaris: gulir ke bagian <strong>Gambar</strong>, tap <strong>+ Galeri</strong> atau <strong>📷 Kamera</strong>. Foto tersimpan otomatis dalam format WebP 720p.',
+    waktu: '< 5 menit',
+    subSteps: [
+      { label: 'Bagian Gambar — tap + Galeri atau Kamera', img: 'guide/ss-edit-opbmn-gambar.png' },
+    ]
+  },
+  {
+    sop: 8,
+    title: 'Penambahan Surat / Dokumen Pendukung',
+    desc: 'Gulir ke bagian <strong>Surat</strong>, tap <strong>+ Upload Surat</strong> dan pilih file PDF. Dokumen tertaut pada data aset.',
+    waktu: '< 5 menit',
+    subSteps: [
+      { label: 'Bagian Surat — tap + Upload Surat dan pilih PDF', img: 'guide/ss-edit-opbmn-surat.png' },
+    ]
+  },
+  {
+    sop: 9,
+    title: 'Pembaruan Data Lengkap Aset BMN',
+    desc: 'Operator BMN dapat mengedit <strong>semua field</strong> aset: Kode NUP, NUP, Keterangan, Merk/Model, Tanggal Perolehan, Jumlah di Neraca, Nilai Aset, Jumlah Inventarisasi, Sticker, dan QR Code. Buka form edit, ubah field yang diperlukan berdasarkan dokumen sumber (SAKTI/SIMAN/BAST), tinjau perubahan, lalu simpan.',
+    tip: 'Seluruh riwayat perubahan per field tersimpan dalam audit trail yang dapat diperluas di bawah setiap field.',
+    waktu: '10–30 menit',
+    subSteps: [
+      { label: 'Semua field aset tersedia — bagian atas form', img: 'guide/ss-edit-opbmn.png' },
+      { label: 'Field lanjutan — Merk, Tanggal, Nilai, NUP, Sticker', img: 'guide/ss-edit-opbmn-scroll.png' },
+      { label: 'Tinjau semua perubahan di modal konfirmasi sebelum simpan', img: 'guide/ss-edit-opbmn-modal.png' },
+    ]
+  },
+  {
+    sop: 10,
+    title: 'Pemasangan QR Code pada Aset BMN',
+    desc: 'Buka <strong>/scan/attach</strong>, izinkan akses kamera, lalu scan QR Code dari stiker yang akan ditempel pada aset. Jika QR sudah terkait ke aset, detail aset ditampilkan. Jika belum terkait, sistem mencari aset secara manual — temukan aset yang sesuai lalu tap <strong>Attach QR</strong> untuk menautkan QR Code ke data aset tersebut.',
+    tip: 'Setiap pemasangan QR Code dicatat dalam audit trail secara append-only.',
+    waktu: '2–5 menit per aset',
+    subSteps: [
+      { label: 'Halaman scan/attach — scan atau cari manual', img: 'guide/ss-scan-attach.png' },
+      { label: 'Hasil pencarian manual — tap Attach QR untuk menautkan', img: 'guide/ss-scan-attach-manual.png' },
+    ]
+  }
+];
+
+const tabData = {
+  umum:  { label: 'Pegawai (Viewer)', sopRange: 'SOP 2–4',  note: 'Tanpa login · Akses bebas', steps: stepsUmum },
+  invt:  { label: 'Tim Inventaris',   sopRange: 'SOP 1–8',  note: 'Perlu login · Sesi 2 jam',  steps: stepsInvt },
+  opbmn: { label: 'Operator BMN',     sopRange: 'SOP 1–10', note: 'Perlu login · Akses penuh', steps: stepsOpBmn },
+};
+
+const allSops = [
+  { sop: 1,  title: 'Akses dan Login ke Sistem',     tab: 'invt',  roleLabel: 'Inv · BMN', roleClass: 'bg-orange-50 text-orange-600' },
+  { sop: 2,  title: 'Penelusuran Data Aset',          tab: 'umum',  roleLabel: 'Semua',     roleClass: 'bg-blue-50 text-blue-600'   },
+  { sop: 3,  title: 'Kartu Inventaris Ruangan',       tab: 'umum',  roleLabel: 'Semua',     roleClass: 'bg-blue-50 text-blue-600'   },
+  { sop: 4,  title: 'Penelusuran via Scan QR',        tab: 'umum',  roleLabel: 'Semua',     roleClass: 'bg-blue-50 text-blue-600'   },
+  { sop: 5,  title: 'Kondisi dan Catatan Aset',       tab: 'invt',  roleLabel: 'Inv · BMN', roleClass: 'bg-orange-50 text-orange-600' },
+  { sop: 6,  title: 'Pembaruan Lokasi Aset',          tab: 'invt',  roleLabel: 'Inv · BMN', roleClass: 'bg-orange-50 text-orange-600' },
+  { sop: 7,  title: 'Foto / Gambar Aset',             tab: 'invt',  roleLabel: 'Inv · BMN', roleClass: 'bg-orange-50 text-orange-600' },
+  { sop: 8,  title: 'Surat / Dokumen Pendukung',      tab: 'invt',  roleLabel: 'Inv · BMN', roleClass: 'bg-orange-50 text-orange-600' },
+  { sop: 9,  title: 'Pembaruan Data Lengkap BMN',     tab: 'opbmn', roleLabel: 'BMN',       roleClass: 'bg-purple-50 text-purple-600' },
+  { sop: 10, title: 'Pemasangan QR Code',             tab: 'opbmn', roleLabel: 'BMN',       roleClass: 'bg-purple-50 text-purple-600' },
+];
+
+// ── State ────────────────────────────────────────────────────────────────────
+
+let currentTab = 'umum';
+let activeSop = null;
+
+// ── Render ───────────────────────────────────────────────────────────────────
+
+function renderTabs() {
+  const bar = document.getElementById('tab-bar');
+  bar.innerHTML = Object.entries(tabData).map(([key, meta]) => `
+    <button
+      onclick="setTab('${key}')"
+      id="tab-btn-${key}"
+      class="flex-1 rounded-lg py-2 text-xs font-medium transition-all leading-tight ${currentTab === key ? 'bg-indigo-600 text-white shadow-sm' : 'text-gray-500 hover:text-gray-700'}"
+    >${meta.label}</button>
+  `).join('');
+
+  const metaBar = document.getElementById('tab-meta-bar');
+  const m = tabData[currentTab];
+  metaBar.innerHTML = `
+    <span class="font-medium text-indigo-600">${m.sopRange}</span>
+    <span>·</span>
+    <span>${m.note}</span>
+  `;
+}
+
+function renderSteps() {
+  const steps = tabData[currentTab].steps;
+  const container = document.getElementById('steps-container');
+  container.innerHTML = steps.map(step => `
+    <div id="sop-${step.sop}" class="rounded-xl bg-white border border-gray-200 shadow-sm overflow-hidden ${activeSop === step.sop ? 'ring-2 ring-indigo-400' : ''}">
+
+      <!-- Header -->
+      <div class="flex items-start gap-3 px-4 pt-4 pb-3 border-b border-gray-100">
+        <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-xs font-bold text-white mt-0.5">${step.sop}</span>
+        <div class="min-w-0">
+          <h2 class="font-semibold text-gray-800 leading-snug">${step.title}</h2>
+          ${step.waktu ? `<p class="text-xs text-gray-400 mt-0.5">Estimasi waktu: ${step.waktu}</p>` : ''}
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="px-4 pt-3 pb-2">
+        <p class="text-sm text-gray-700 leading-relaxed">${step.desc}</p>
+      </div>
+
+      <!-- Sub-steps -->
+      <div class="px-4 pb-3 space-y-4">
+        ${step.subSteps.map((sub, i) => `
+          <div class="rounded-lg border border-gray-100 overflow-hidden">
+            <div class="flex items-center gap-2 bg-gray-50 px-3 py-2 border-b border-gray-100">
+              <span class="flex h-5 min-w-[2.25rem] items-center justify-center rounded bg-indigo-100 px-1.5 text-[10px] font-bold text-indigo-700 font-mono">${step.sop}.${i + 1}</span>
+              <span class="text-xs font-medium text-gray-600">${sub.label}</span>
+            </div>
+            <div class="bg-gray-100 flex justify-center p-2">
+              <img
+                src="${sub.img}"
+                alt="Langkah ${step.sop}.${i + 1} — ${sub.label}"
+                class="max-h-[420px] w-auto rounded-md shadow ring-1 ring-black/10 object-contain"
+                onerror="this.parentElement.innerHTML='<div class=\\'flex h-32 w-full items-center justify-center text-xs text-gray-400\\'>Screenshot belum tersedia</div>'"
+              />
+            </div>
+          </div>
+        `).join('')}
+      </div>
+
+      <!-- Tip -->
+      ${step.tip ? `
+        <div class="px-4 pb-4">
+          <div class="flex gap-2 rounded-lg bg-indigo-50 border border-indigo-100 px-3 py-2">
+            <svg class="mt-0.5 h-4 w-4 shrink-0 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <p class="text-xs text-indigo-700">${step.tip}</p>
+          </div>
+        </div>
+      ` : ''}
+    </div>
+  `).join('');
+}
+
+function renderSidebar() {
+  const nav = document.getElementById('sop-nav-list');
+  nav.innerHTML = allSops.map(n => {
+    const isActive = activeSop === n.sop;
+    return `
+      <button
+        onclick="selectSop(${n.sop}, '${n.tab}')"
+        class="w-full flex items-start gap-2.5 px-2.5 py-2 rounded-lg text-left transition-colors ${isActive ? 'bg-indigo-50 ring-1 ring-indigo-200' : 'hover:bg-gray-50'}"
+      >
+        <span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${isActive ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-500'} text-[10px] font-bold leading-none">${n.sop}</span>
+        <div class="flex-1 min-w-0">
+          <p class="text-xs font-medium text-gray-700 leading-snug line-clamp-2">${n.title}</p>
+          <span class="mt-1 inline-block rounded px-1.5 py-0.5 text-[9px] font-semibold ${n.roleClass}">${n.roleLabel}</span>
+        </div>
+      </button>
+    `;
+  }).join('');
+}
+
+function render() {
+  renderTabs();
+  renderSteps();
+  renderSidebar();
+}
+
+// ── Actions ──────────────────────────────────────────────────────────────────
+
+function setTab(tab) {
+  currentTab = tab;
+  activeSop = null;
+  render();
+}
+
+function selectSop(sop, tab) {
+  activeSop = sop;
+  currentTab = tab;
+  render();
+  setTimeout(() => {
+    document.getElementById('sop-' + sop)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 50);
+}
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+render();
+</script>
+</body>
+</html>
